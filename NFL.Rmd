@@ -1,0 +1,139 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+install.packages("tidyverse")
+install.packages("readr")
+```
+```{r}
+library(tidyverse)
+library(readr)
+```
+
+```{r}
+nfl_superbowl <- read_csv("https://raw.githubusercontent.com/JavOrraca/NFLSuperBowlPrediction/master/Data/NFL_by_Team.csv")
+
+nfl_superbowl
+```
+```{r}
+
+nfl <- select(nfl_superbowl, GamesTotalLost, GamesTotalWon, Team)
+nfl
+
+ggplot(data = nfl, mapping = aes(x = GamesTotalWon, y = GamesTotalLost )) + geom_point(mapping = aes(color = Team, size = Team)) + labs(title = "Games Won Vs. Games Lost", subtitle = "NFL Statistics", x = "GamesTotalWon", y = "GamesTotalLost", caption = "NFL Data set")
+
+```
+```{r}
+# Linear Regression for games total won and lost
+
+number_one <- lm(GamesTotalWon ~ GamesTotalLost, data = nfl)
+
+number_one
+```
+
+
+
+
+
+```{r}
+#Predicting for the first probability
+games_one <- data.frame(GamesTotalLost = c(9))
+
+games_one
+
+
+watch <- predict(number_one, games_one)
+
+watch
+
+# Requires a new collumn
+nfl$first_one <- watch
+
+nfl
+
+
+#Scatter plot
+
+probability_one <- ggplot(data = nfl, mapping = aes(y = GamesTotalLost, x = GamesTotalWon)) + geom_point(mapping = aes(color = Team, size = Team)) + geom_smooth(method = "lm")
+
+probability_one
+```
+```{r}
+nfl_two <- select(nfl_superbowl, GamesTotal, PointsTotal, Team)
+nfl_two
+
+ggplot(data = nfl_two, mapping = aes(x = GamesTotal, y = PointsTotal, fill = Team )) + geom_bar(stat = "identity")  + labs(title = "Games Total Vs. Points Total", subtitle = "NFL Statistics", x = "Games Total", y = "Points Total", caption = "NFL Data set")
+```
+```{r}
+# Linear Regression for games total and points total
+
+number_two <- lm(GamesTotal ~ PointsTotal, data = nfl_two)
+
+number_two
+```
+
+
+```{r}
+#Predicting for the second probability
+games_two <- data.frame(PointsTotal = c(300))
+
+games_two
+
+
+watch_two <- predict(number_two, games_two)
+
+watch_two
+
+# Requires a new collumn
+nfl_two$first_two <- watch_two
+
+nfl_two
+
+
+#Bar Graph
+
+probability_two <- ggplot(data = nfl_two, mapping = aes(y = PointsTotal, x = GamesTotal, fill = Team)) + geom_bar(stat = "identity")
+
+probability_two
+```
+```{r}
+Filters <- filter(nfl_superbowl, YardsTotalPassing <= 3500 & YardsTotalRushing <= 2000)
+Filters
+
+nfl_three <- select(Filters, YardsTotalPassing, YardsTotalRushing, Team)
+nfl_three
+
+ggplot(data = nfl_three, mapping = aes(x = YardsTotalRushing, y = YardsTotalPassing, fill = Team )) + geom_bar(stat = "identity")  + labs(title = "YardsTotalRushing Vs. YardsTotalPassing", subtitle = "NFL Statistics", x = "YardsTotalRushing", y = "YardsTotalRushing", caption = "NFL Data set")
+```
+```{r}
+# Linear Regression for Yards Total Rushing and Yards Total Passing
+
+number_three <- lm(YardsTotalRushing ~ YardsTotalPassing, data = nfl_three)
+
+number_three
+```
+```{r}
+#Predicting for the third probability
+games_three <- data.frame(YardsTotalPassing = c(2000))
+
+games_three
+
+
+watch_three <- predict(number_three, games_three)
+
+watch_three
+
+# Requires a new collumn
+nfl_three$first_two <- watch_three
+
+nfl_three
+
+
+#Bar Graph
+
+probability_three <- ggplot(data = nfl_three, mapping = aes(y = YardsTotalRushing, x = YardsTotalPassing, fill = Team)) + geom_bar(stat = "identity")
+
+probability_three
+```
